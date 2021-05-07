@@ -18,6 +18,7 @@
         $temp_name = $_FILES["image_file"]["tmp_name"];
         $file_size = $_FILES["image_file"]["size"];
         $error = $_FILES["image_file"]["error"];
+        $result_name = hash("sha256",rand()).'.webp';
         if (!$temp_name)
         {
             echo "ERROR: Please browse for file before uploading";
@@ -26,7 +27,6 @@
         function compress_image($source_url, $destination_url, $quality)
         {
             $info = getimagesize($source_url);
-            $result_name = hash("sha256",rand()).'.webp';
             if ($info['mime'] == 'image/jpeg')
             {
                 $image = imagecreatefromjpeg($source_url);
@@ -40,6 +40,7 @@
                 $image = imagecreatefrompng($source_url);
             }
             imagewebp($image, $destination_url.$result_name, $quality);
+            imagedestroy($image);
             echo "Image uploaded successfully.";
         }
         if ($error > 0)
@@ -48,7 +49,7 @@
         }
         else if (($file_type == "image/gif") || ($file_type == "image/jpeg") || ($file_type == "image/png") || ($file_type == "image/pjpeg"))
         {
-            $filename = compress_image($temp_name, "uploads/" . $file_name, 80);
+            $filename = compress_image($temp_name, "uploads/" . $result_name, 80);
         }
         else
         {
